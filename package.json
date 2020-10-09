@@ -1,0 +1,28 @@
+{
+  "name": "xwallet-server",
+  "version": "1.0.0",
+  "description": "xWallet - money tracker.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "server": "nodemon app.js"
+  },
+  "keywords": [
+    "xwallet",
+    "money",
+    "money",
+    "tracker",
+    "expenses",
+    "tracker"
+  ],
+  "author": "xbaysal11 <baisalbek.daniiarov@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.2",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.8"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
