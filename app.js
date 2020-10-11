@@ -1,4 +1,5 @@
-const express, { Router } = require('express');
+const express = require('express');
+const { Router } = require('express');
 const config = require('config');
 const mongoose = require('mongoose');
 const router = Router();
