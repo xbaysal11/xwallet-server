@@ -13,7 +13,7 @@ app.use('/api/income', require('./routes/income.routes'));
 app.use('/api/expense', require('./routes/expense.routes'));
 app.use('/api/transfer', require('./routes/transfer.routes'));
 
-const PORT = config.get('port') || 8080;
+const PORT = process.env.PORT || config.get('port');
 
 async function start() {
     try {
