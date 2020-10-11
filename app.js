@@ -1,8 +1,6 @@
 const express = require('express');
-const { Router } = require('express');
 const config = require('config');
 const mongoose = require('mongoose');
-const router = Router();
 const app = express();
 
 mongoose.set('useFindAndModify', false);
@@ -14,10 +12,6 @@ app.use('/api/expense-category', require('./routes/expenseCategory.routes'));
 app.use('/api/income', require('./routes/income.routes'));
 app.use('/api/expense', require('./routes/expense.routes'));
 app.use('/api/transfer', require('./routes/transfer.routes'));
-
-router.get('/', (req,res)=>{
-    res.send('xWallet')
-});
 
 const PORT = process.env.PORT || config.get('port');
 
