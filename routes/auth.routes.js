@@ -45,7 +45,6 @@ router.post(
                 email: user.email,
                 firstName: user.first_name,
                 lastName: user.last_name,
-                balance: user.balance,
                 message: 'User created',
             });
         } catch (e) {
@@ -95,10 +94,6 @@ router.post(
                 email: user.email,
                 firstName: user.first_name,
                 lastName: user.last_name,
-                balance: user.balance,
-                wallet: user.wallet,
-                incomeCategory: user.incomeCategory,
-                expenseCategory: user.expenseCategory,
                 token,
             });
         } catch (e) {

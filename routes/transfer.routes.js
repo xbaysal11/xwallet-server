@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const auth = require('../middleware/auth.middleware');
 const Transfer = require('../models/Transfer');
+const Wallet = require('../models/Wallet');
 const router = Router();
 
 // /api/transfer
@@ -16,6 +17,18 @@ router.post('/', auth, async (req, res) => {
             owner: req.user.userId,
         });
         await transfer.save();
+
+        const resource = await Wallet.findOneAndUpdate(
+            { owner: req.user.userId, _id: resourceId },
+            { $inc: { balance: -amount } },
+            { new: true }
+        );
+        const destination = await Wallet.findOneAndUpdate(
+            { owner: req.user.userId, _id: destinationId },
+            { $inc: { balance: amount } },
+            { new: true }
+        );
+
         res.status(201).json(transfer);
     } catch (e) {
         res.status(500).json({

@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const auth = require('../middleware/auth.middleware');
 const Expense = require('../models/Expense');
+const Wallet = require('../models/Wallet');
 const router = Router();
 
 // /api/expense
@@ -16,6 +17,12 @@ router.post('/', auth, async (req, res) => {
             owner: req.user.userId,
         });
         await expenseModel.save();
+        const wallet = await Wallet.findOneAndUpdate(
+            { owner: req.user.userId, _id: resourceId },
+            { $inc: { balance: -expense } },
+            { new: true }
+        );
+
         res.status(201).json(expenseModel);
     } catch (e) {
         res.status(500).json({
@@ -36,5 +43,6 @@ router.get('/', auth, async (req, res) => {
         });
     }
 });
+
 
 module.exports = router;
