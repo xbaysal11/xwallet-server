@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const app = express();
 mongoose.set('useFindAndModify', false);
 app.use(express.json({ extended: true }));
+
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/wallet', require('./routes/wallet.routes'));
 app.use('/api/income-category', require('./routes/incomeCategory.routes'));
