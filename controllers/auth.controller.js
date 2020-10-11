@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const config = require('config');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Wallet = require('../models/Wallet');
 
 // registration
 exports.register = async (req, res) => {
@@ -56,6 +57,7 @@ exports.login = async (req, res) => {
 
         const { email, password } = req.body;
         const user = await User.findOne({ email });
+        console.log(user);
         if (!user) {
             return res.status(400).json({ message: 'User not exist' });
         }
@@ -66,12 +68,19 @@ exports.login = async (req, res) => {
         }
 
         const token = jwt.sign({ userId: user.id }, config.get('jwtSecretKey'));
+        let total = 0;
+        const wallet = await Wallet.find({ owner: user.id });
+        console.log(wallet);
+        await wallet.map((item) => {
+            total = total + item.balance;
+        });
 
         res.json({
             id: user.id,
             email: user.email,
             firstName: user.first_name,
             lastName: user.last_name,
+            total,
             token,
         });
     } catch (e) {

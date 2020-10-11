@@ -23,8 +23,12 @@ exports.create = async (req, res) => {
 // get all wallets
 exports.getAll = async (req, res) => {
     try {
+        let total = 0;
         const wallet = await Wallet.find({ owner: req.user.userId });
-        res.json(wallet);
+        await wallet.map((item) => {
+            total = total + item.balance;
+        });
+        res.json({ total, wallet });
     } catch (e) {
         res.status(500).json({
             errors: e.message,

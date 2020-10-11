@@ -1,25 +1,39 @@
 const Expense = require('../models/Expense');
 const Wallet = require('../models/Wallet');
+const ExpenseCategory = require('../models/ExpenseCategory');
 
 // create expense
 exports.create = async (req, res) => {
     try {
         const { expense, comment, categoryId, resourceId } = req.body;
-        const expenseModel = new Expense({
-            expense,
-            comment,
-            categoryId,
-            resourceId,
+        const expenseCategory = await ExpenseCategory.findOne({
             owner: req.user.userId,
+            _id: categoryId,
         });
-        await expenseModel.save();
-        const wallet = await Wallet.findOneAndUpdate(
+
+        const walletModel = await Wallet.findOneAndUpdate(
             { owner: req.user.userId, _id: resourceId },
             { $inc: { balance: -expense } },
             { new: true }
         );
+        const expenseModel = new Expense({
+            expense,
+            comment,
+            categoryId,
+            categoryName: expenseCategory.name,
+            resourceId,
+            resourceName: walletModel.name,
+            owner: req.user.userId,
+        });
+        await expenseModel.save();
 
-        res.status(201).json(expenseModel);
+
+        let total = 0;
+        const wallet = await Wallet.find({ owner: req.user.userId });
+        await wallet.map((item) => {
+            total = total + item.balance;
+        });
+        res.status(201).json({ total, expenseModel });
     } catch (e) {
         res.status(500).json({
             errors: e.message,

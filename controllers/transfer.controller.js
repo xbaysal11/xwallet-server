@@ -5,14 +5,6 @@ const Wallet = require('../models/Wallet');
 exports.create = async (req, res) => {
     try {
         const { amount, comment, resourceId, destinationId } = req.body;
-        const transfer = new Transfer({
-            amount,
-            comment,
-            resourceId,
-            destinationId,
-            owner: req.user.userId,
-        });
-        await transfer.save();
 
         const resource = await Wallet.findOneAndUpdate(
             { owner: req.user.userId, _id: resourceId },
@@ -24,8 +16,24 @@ exports.create = async (req, res) => {
             { $inc: { balance: amount } },
             { new: true }
         );
+        const transfer = new Transfer({
+            amount,
+            comment,
+            resourceId,
+            resourceName: resource.name,
+            destinationId,
+            destinationName: destination.name,
+            owner: req.user.userId,
+        });
+        await transfer.save();
 
-        res.status(201).json(transfer);
+
+        let total = 0;
+        const wallet = await Wallet.find({ owner: req.user.userId });
+        await wallet.map((item) => {
+            total = total + item.balance;
+        });
+        res.status(201).json({ total, transfer });
     } catch (e) {
         res.status(500).json({
             errors: e.message,
