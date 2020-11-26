@@ -1,0 +1,75 @@
+paths:
+  /api/wallet:
+    get:
+      tags:
+        - wallet
+      summary: getAll
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getAllWalletSuccess'
+    post:
+      tags:
+        - wallet
+      summary: create
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: create
+          description: create wallet with balance 0
+          required: true
+          schema:
+            $ref: '#/definitions/createWallet'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/createWalletSuccess'
+
+definitions:
+  getAllWalletSuccess:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int32
+      wallet:
+        type: array
+        items:
+          type: object
+          properties:
+            balance:
+              type: integer
+              format: int32
+            _id:
+              type: string
+            name:
+              type: string
+            type:
+              type: string
+            owner:
+              type: string
+
+  createWallet:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+
+  createWalletSuccess:
+    type: object
+    properties:
+      balance:
+        type: integer
+        format: int32
+      _id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      owner:
+        type: string

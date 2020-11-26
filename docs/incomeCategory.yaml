@@ -1,0 +1,58 @@
+paths:
+  /api/income-category:
+    get:
+      tags:
+        - income-category
+      summary: getAll
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getAllIncomeCategorySuccess'
+    post:
+      tags:
+        - income-category
+      summary: create
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: create
+          description: create income category
+          required: true
+          schema:
+            $ref: '#/definitions/createIncomeCategory'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/createIncomeCategorySuccess'
+
+definitions:
+  getAllIncomeCategorySuccess:
+    type: array
+    items:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        owner:
+          type: string
+
+  createIncomeCategory:
+    type: object
+    properties:
+      name:
+        type: string
+
+  createIncomeCategorySuccess:
+    type: object
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+      owner:
+        type: string
+

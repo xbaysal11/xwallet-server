@@ -1,0 +1,96 @@
+paths:
+  /api/income:
+    get:
+      tags:
+        - income
+      summary: getAll
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getAllIncomeSuccess'
+    post:
+      tags:
+        - income
+      summary: create
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: create
+          description: create income
+          required: true
+          schema:
+            $ref: '#/definitions/createIncome'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/createIncomeSuccess'
+
+definitions:
+  getAllIncomeSuccess:
+    type: array
+    items:
+      type: object
+      properties:
+        income:
+          type: integer
+          format: int32
+        _id:
+          type: string
+        comment:
+          type: string
+        categoryId:
+          type: string
+        categoryName:
+          type: string
+        destinationId:
+          type: string
+        destinationName:
+          type: string
+        owner:
+          type: string
+        date:
+          type: string
+
+  createIncome:
+    type: object
+    properties:
+      income:
+        type: integer
+        format: int32
+      comment:
+        type: string
+      categoryId:
+        type: string
+      destinationId:
+        type: string
+
+  createIncomeSuccess:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int32
+      incomeModel:
+        type: object
+        properties:
+          income:
+            type: integer
+            format: int32
+          _id:
+            type: string
+          comment:
+            type: string
+          categoryId:
+            type: string
+          categoryName:
+            type: string
+          destinationId:
+            type: string
+          destinationName:
+            type: string
+          owner:
+            type: string
+          date:
+            type: string

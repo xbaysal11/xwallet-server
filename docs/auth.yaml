@@ -1,0 +1,93 @@
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - auth
+      summary: registration
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: register
+          description: It enables a user to create an account
+          required: true
+          schema:
+            $ref: '#/definitions/register'
+      responses:
+        201:
+          schema:
+            $ref: '#/definitions/registerSuccess'
+
+  /api/auth/login:
+    post:
+      tags:
+        - auth
+      summary: login
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: login
+          description: It enables login to application
+          required: true
+          schema:
+            $ref: '#/definitions/login'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/loginSuccess'
+
+definitions:
+  register:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+
+  registerSuccess:
+    type: object
+    properties:
+      id:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      message:
+        type: string
+
+  login:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        
+  loginSuccess:
+    type: object
+    properties:
+      id:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      total:
+        type: integer
+        format: int32
+      token:
+        type: string
