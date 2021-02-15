@@ -9,4 +9,11 @@ router.post('/', auth, wallet_controller.create);
 
 router.get('/', auth, wallet_controller.getAll);
 
+router.get('/:id', auth, wallet_controller.getById);
+
+router.put('/:id', auth, wallet_controller.update);
+
+router.delete('/:id', auth, wallet_controller.delete);
+
+
 module.exports = router;

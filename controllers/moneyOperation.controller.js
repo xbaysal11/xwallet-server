@@ -44,6 +44,7 @@ exports.create = async (req, res) => {
           owner: req.user.userId,
           type: 3,
         });
+        await MoneyOperationModel.save();
       }
     } else {
       const category = await Category.findOne({
@@ -63,8 +64,23 @@ exports.create = async (req, res) => {
           { new: true }
         );
       }
+      MoneyOperationModel = new MoneyOperation({
+        amount,
+        comment,
+        date,
+        category: {
+          categoryId,
+          categoryName: category.name,
+        },
+        wallet: {
+          walletId,
+          walletName: walletModel.name,
+        },
+        owner: req.user.userId,
+        type: category.type,
+      });
+      await MoneyOperationModel.save();
     }
-    await MoneyOperationModel.save();
 
     let total = 0;
     const wallet = await Wallet.find({ owner: req.user.userId });
