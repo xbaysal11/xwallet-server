@@ -5,6 +5,7 @@ let schema = new Schema({
   password: { type: String, required: true },
   first_name: { type: String, required: true },
   last_name: { type: String, required: true },
+  secret_word: { type: String},
 });
 schema.method('toJSON', function () {
   const { __v, _id, ...object } = this.toObject();
