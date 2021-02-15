@@ -4,42 +4,66 @@ const Category = require('../models/Category');
 
 exports.create = async (req, res) => {
   try {
-    const { amount, comment, date, categoryId, walletId, type } = req.body;
-    const category = await Category.findOne({
-      owner: req.user.userId,
-      _id: categoryId,
-    });
-
-    let walletModel;
-    if (category.type === 1) {
-      walletModel = await Wallet.findOneAndUpdate(
-        { owner: req.user.userId, _id: walletId },
-        { $inc: { balance: -amount } },
-        { new: true }
-      );
-    } else if (category.type === 2) {
-      walletModel = await Wallet.findOneAndUpdate(
-        { owner: req.user.userId, _id: walletId },
-        { $inc: { balance: amount } },
-        { new: true }
-      );
-    }
-
-    const MoneyOperationModel = new MoneyOperation({
+    const {
       amount,
       comment,
       date,
-      category: {
-        categoryId,
-        categoryName: category.name,
-      },
-      wallet: {
-        walletId,
-        walletName: walletModel.name,
-      },
-      owner: req.user.userId,
-      type: category.type,
-    });
+      categoryId,
+      walletId,
+      fromWalletId,
+      toWalletId,
+      // type,
+    } = req.body;
+
+    let walletModel, MoneyOperationModel;
+    if (!categoryId && !walletId) {
+      if (fromWalletId && toWalletId) {
+        fromWalletModel = await Wallet.findOneAndUpdate(
+          { owner: req.user.userId, _id: fromWalletId },
+          { $inc: { balance: -amount } },
+          { new: true }
+        );
+        toWalletModel = await Wallet.findOneAndUpdate(
+          { owner: req.user.userId, _id: toWalletId },
+          { $inc: { balance: amount } },
+          { new: true }
+        );
+
+        MoneyOperationModel = new MoneyOperation({
+          amount,
+          comment,
+          date,
+          fromWallet: {
+            walletId: fromWalletId,
+            walletName: fromWalletModel.name,
+          },
+          toWallet: {
+            walletId: toWalletId,
+            walletName: toWalletModel.name,
+          },
+          owner: req.user.userId,
+          type: 3,
+        });
+      }
+    } else {
+      const category = await Category.findOne({
+        owner: req.user.userId,
+        _id: categoryId,
+      });
+      if (category.type === 1) {
+        walletModel = await Wallet.findOneAndUpdate(
+          { owner: req.user.userId, _id: walletId },
+          { $inc: { balance: -amount } },
+          { new: true }
+        );
+      } else if (category.type === 2) {
+        walletModel = await Wallet.findOneAndUpdate(
+          { owner: req.user.userId, _id: walletId },
+          { $inc: { balance: amount } },
+          { new: true }
+        );
+      }
+    }
     await MoneyOperationModel.save();
 
     let total = 0;
@@ -93,47 +117,109 @@ exports.getById = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const moneyOperationPrev = await MoneyOperation.findById(req.params.id);
-    if (req.body.amount) {
+    let moneyOperationNext, moneyOperationPrev;
+    moneyOperationPrev = await MoneyOperation.findById(req.params.id);
+    if (moneyOperationPrev.type === 3) {
+      moneyOperationNext = await MoneyOperation.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new: true,
+        }
+      );
       if (req.body.amount >= moneyOperationPrev.amount) {
         let diff = req.body.amount - moneyOperationPrev.amount;
-        if (moneyOperationPrev.type === 1) {
-          await Wallet.findOneAndUpdate(
-            { owner: req.user.userId, _id: moneyOperationPrev.wallet.walletId },
-            { $inc: { balance: -diff } },
-            { new: true }
-          );
-        } else if (moneyOperationPrev.type === 2) {
-          await Wallet.findOneAndUpdate(
-            { owner: req.user.userId, _id: moneyOperationPrev.wallet.walletId },
-            { $inc: { balance: diff } },
-            { new: true }
-          );
-        }
+        await Wallet.findOneAndUpdate(
+          {
+            owner: req.user.userId,
+            _id: moneyOperationPrev.fromWallet.walletId,
+          },
+          { $inc: { balance: -diff } },
+          { new: true }
+        );
+        await Wallet.findOneAndUpdate(
+          {
+            owner: req.user.userId,
+            _id: moneyOperationPrev.toWallet.walletId,
+          },
+          { $inc: { balance: diff } },
+          { new: true }
+        );
       } else {
         let diff = moneyOperationPrev.amount - req.body.amount;
-        if (moneyOperationPrev.type === 1) {
-          await Wallet.findOneAndUpdate(
-            { owner: req.user.userId, _id: moneyOperationPrev.wallet.walletId },
-            { $inc: { balance: diff } },
-            { new: true }
-          );
-        } else if (moneyOperationPrev.type === 2) {
-          await Wallet.findOneAndUpdate(
-            { owner: req.user.userId, _id: moneyOperationPrev.wallet.walletId },
-            { $inc: { balance: -diff } },
-            { new: true }
-          );
+        await Wallet.findOneAndUpdate(
+          {
+            owner: req.user.userId,
+            _id: moneyOperationPrev.fromWallet.walletId,
+          },
+          { $inc: { balance: diff } },
+          { new: true }
+        );
+        await Wallet.findOneAndUpdate(
+          {
+            owner: req.user.userId,
+            _id: moneyOperationPrev.toWallet.walletId,
+          },
+          { $inc: { balance: -diff } },
+          { new: true }
+        );
+      }
+    } else {
+      moneyOperationPrev = await MoneyOperation.findById(req.params.id);
+      if (req.body.amount) {
+        if (req.body.amount >= moneyOperationPrev.amount) {
+          let diff = req.body.amount - moneyOperationPrev.amount;
+          if (moneyOperationPrev.type === 1) {
+            await Wallet.findOneAndUpdate(
+              {
+                owner: req.user.userId,
+                _id: moneyOperationPrev.wallet.walletId,
+              },
+              { $inc: { balance: -diff } },
+              { new: true }
+            );
+          } else if (moneyOperationPrev.type === 2) {
+            await Wallet.findOneAndUpdate(
+              {
+                owner: req.user.userId,
+                _id: moneyOperationPrev.wallet.walletId,
+              },
+              { $inc: { balance: diff } },
+              { new: true }
+            );
+          }
+        } else {
+          let diff = moneyOperationPrev.amount - req.body.amount;
+          if (moneyOperationPrev.type === 1) {
+            await Wallet.findOneAndUpdate(
+              {
+                owner: req.user.userId,
+                _id: moneyOperationPrev.wallet.walletId,
+              },
+              { $inc: { balance: diff } },
+              { new: true }
+            );
+          } else if (moneyOperationPrev.type === 2) {
+            await Wallet.findOneAndUpdate(
+              {
+                owner: req.user.userId,
+                _id: moneyOperationPrev.wallet.walletId,
+              },
+              { $inc: { balance: -diff } },
+              { new: true }
+            );
+          }
         }
       }
+      moneyOperationNext = await MoneyOperation.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new: true,
+        }
+      );
     }
-    const moneyOperationNext = await MoneyOperation.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      {
-        new: true,
-      }
-    );
+
     res.json(moneyOperationNext);
   } catch (e) {
     res.status(500).json({

@@ -5,10 +5,18 @@ let schema = new Schema({
   comment: { type: String, required: true },
   date: { type: Date, default: Date.now },
   category: {
-    categoryId: { type: Types.ObjectId, ref: 'Category', required: true },
+    categoryId: { type: Types.ObjectId, ref: 'Category' },
     categoryName: { type: String },
   },
   wallet: {
+    walletId: { type: Types.ObjectId, ref: 'Wallet' },
+    walletName: { type: String },
+  },
+  fromWallet: {
+    walletId: { type: Types.ObjectId, ref: 'Wallet' },
+    walletName: { type: String },
+  },
+  toWallet: {
     walletId: { type: Types.ObjectId, ref: 'Wallet' },
     walletName: { type: String },
   },

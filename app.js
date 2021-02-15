@@ -9,7 +9,6 @@ mongoose.set('useFindAndModify', false);
 app.use(express.json({ extended: true }));
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/wallet', require('./routes/wallet.routes'));
-app.use('/api/transfer', require('./routes/transfer.routes'));
 app.use('/api/money-operation', require('./routes/moneyOperation.routes'));
 app.use('/api/category', require('./routes/category.routes'));
 
