@@ -4,22 +4,10 @@ let schema = new Schema({
   amount: { type: Number, default: 0 },
   comment: { type: String, required: true },
   date: { type: Date, default: Date.now },
-  category: {
-    categoryId: { type: Types.ObjectId, ref: 'Category' },
-    categoryName: { type: String },
-  },
-  wallet: {
-    walletId: { type: Types.ObjectId, ref: 'Wallet' },
-    walletName: { type: String },
-  },
-  fromWallet: {
-    walletId: { type: Types.ObjectId, ref: 'Wallet' },
-    walletName: { type: String },
-  },
-  toWallet: {
-    walletId: { type: Types.ObjectId, ref: 'Wallet' },
-    walletName: { type: String },
-  },
+  category: { type: Types.ObjectId, ref: 'Category' },
+  wallet: { type: Types.ObjectId, ref: 'Wallet' },
+  fromWallet: { type: Types.ObjectId, ref: 'Wallet' },
+  toWallet: { type: Types.ObjectId, ref: 'Wallet' },
   type: { type: Number },
   owner: { type: Types.ObjectId, ref: 'User' },
 });

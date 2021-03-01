@@ -1,0 +1,107 @@
+paths:
+  /api/category:
+    get:
+      tags:
+        - category
+      summary: getAll
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getAllCategorySuccess'
+    post:
+      tags:
+        - category
+      summary: create
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: create
+          description: create category
+          required: true
+          schema:
+            $ref: '#/definitions/createCategory'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/createCategorySuccess'
+  /api/category/:id:
+    get:
+      tags:
+        - category
+      summary: getById
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/createCategorySuccess'
+    put:
+      tags:
+        - category
+      summary: update
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: update
+          description: update wallet
+          required: true
+          schema:
+            $ref: '#/definitions/createCategory'
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/createCategorySuccess'
+    delete:
+      tags:
+        - category
+      summary: delete
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/deleteSuccess'
+
+definitions:
+  getAllCategorySuccess:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: integer
+          format: int32
+        owner:
+          type: string
+
+  createCategory:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: integer
+        format: int32
+
+  createCategorySuccess:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: integer
+        format: int32
+      owner:
+        type: string
+  deleteSuccess:
+    type: object
+    properties:
+      message:
+        type: string

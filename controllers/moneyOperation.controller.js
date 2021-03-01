@@ -1,6 +1,7 @@
 const MoneyOperation = require('../models/MoneyOperation');
 const Wallet = require('../models/Wallet');
 const Category = require('../models/Category');
+const moment = require('moment');
 
 exports.create = async (req, res) => {
   try {
@@ -12,11 +13,11 @@ exports.create = async (req, res) => {
       walletId,
       fromWalletId,
       toWalletId,
-      // type,
+      type,
     } = req.body;
 
     let walletModel, MoneyOperationModel;
-    if (!categoryId && !walletId) {
+    if (!categoryId && !walletId && type === 3) {
       if (fromWalletId && toWalletId) {
         fromWalletModel = await Wallet.findOneAndUpdate(
           { owner: req.user.userId, _id: fromWalletId },
@@ -33,16 +34,10 @@ exports.create = async (req, res) => {
           amount,
           comment,
           date,
-          fromWallet: {
-            walletId: fromWalletId,
-            walletName: fromWalletModel.name,
-          },
-          toWallet: {
-            walletId: toWalletId,
-            walletName: toWalletModel.name,
-          },
+          fromWallet: fromWalletId,
+          toWallet: toWalletId,
           owner: req.user.userId,
-          type: 3,
+          type,
         });
         await MoneyOperationModel.save();
       }
@@ -51,13 +46,13 @@ exports.create = async (req, res) => {
         owner: req.user.userId,
         _id: categoryId,
       });
-      if (category.type === 1) {
+      if (type === 1 && category.type === 1) {
         walletModel = await Wallet.findOneAndUpdate(
           { owner: req.user.userId, _id: walletId },
           { $inc: { balance: -amount } },
           { new: true }
         );
-      } else if (category.type === 2) {
+      } else if (type === 2 && category.type === 2) {
         walletModel = await Wallet.findOneAndUpdate(
           { owner: req.user.userId, _id: walletId },
           { $inc: { balance: amount } },
@@ -68,16 +63,10 @@ exports.create = async (req, res) => {
         amount,
         comment,
         date,
-        category: {
-          categoryId,
-          categoryName: category.name,
-        },
-        wallet: {
-          walletId,
-          walletName: walletModel.name,
-        },
+        category: categoryId,
+        wallet: walletId,
         owner: req.user.userId,
-        type: category.type,
+        type,
       });
       await MoneyOperationModel.save();
     }
@@ -100,16 +89,39 @@ exports.getAll = async (req, res) => {
   try {
     let moneyOperation;
     if (req.query.type) {
-      moneyOperation = await MoneyOperation.find({
-        owner: req.user.userId,
-        type: req.query.type,
-      });
+      if (req.query.startDate && req.query.endDate) {
+        moneyOperation = await MoneyOperation.find({
+          owner: req.user.userId,
+          type: req.query.type,
+          date: {
+            $gte: moment(`${req.query.startDate}`).toISOString() || '',
+            $lt: moment(`${req.query.endDate}`).toISOString() || '',
+          },
+        })
+          .populate('category')
+          .populate('wallet')
+          .populate('fromWallet')
+          .populate('toWallet');
+      } else {
+        moneyOperation = await MoneyOperation.find({
+          owner: req.user.userId,
+          type: req.query.type,
+        })
+          .populate('category')
+          .populate('wallet')
+          .populate('fromWallet')
+          .populate('toWallet');
+      }
     } else {
       moneyOperation = await MoneyOperation.find({
         owner: req.user.userId,
-      });
+      })
+        .populate('category')
+        .populate('wallet')
+        .populate('fromWallet')
+        .populate('toWallet');
     }
-
+    console.log(moment(`${req.query.startDate}`).toISOString());
     res.json(moneyOperation);
   } catch (e) {
     res.status(500).json({
@@ -121,7 +133,11 @@ exports.getAll = async (req, res) => {
 
 exports.getById = async (req, res) => {
   try {
-    const moneyOperation = await MoneyOperation.findById(req.params.id);
+    const moneyOperation = await MoneyOperation.findById(req.params.id)
+      .populate('category')
+      .populate('wallet')
+      .populate('fromWallet')
+      .populate('toWallet');
     res.json(moneyOperation);
   } catch (e) {
     res.status(500).json({

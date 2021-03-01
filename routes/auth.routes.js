@@ -2,6 +2,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const auth_controller = require('../controllers/auth.controller');
 const router = Router();
+const auth = require('../middleware/auth.middleware');
 
 // /api/auth/register
 router.post(
@@ -43,10 +44,6 @@ router.post(
   auth_controller.reset
 );
 
-router.put(
-  '/:id',
-  [check('password', 'can not change password').not().exists()],
-  auth_controller.update
-);
+router.put('/:id', auth, auth_controller.update);
 
 module.exports = router;

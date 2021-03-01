@@ -26,6 +26,42 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/createWalletSuccess'
+  /api/wallet/:id:
+    get:
+      tags:
+        - wallet
+      summary: getById
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getWalletByIdSuccess'
+    put:
+      tags:
+        - wallet
+      summary: update
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: update
+          description: update wallet
+          required: true
+          schema:
+            $ref: '#/definitions/updateWalletSuccess'
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getWalletByIdSuccess'
+    delete:
+      tags:
+        - wallet
+      summary: delete
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/deleteSuccess'
 
 definitions:
   getAllWalletSuccess:
@@ -42,7 +78,7 @@ definitions:
             balance:
               type: integer
               format: int32
-            _id:
+            id:
               type: string
             name:
               type: string
@@ -57,6 +93,37 @@ definitions:
       name:
         type: string
       type:
+        type: string
+  deleteSuccess:
+    type: object
+    properties:
+      message:
+        type: string
+
+  updateWalletSuccess:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      balance:
+        type: integer
+        format: int32
+
+  getWalletByIdSuccess:
+    type: object
+    properties:
+      balance:
+        type: integer
+        format: int32
+      id:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+      owner:
         type: string
 
   createWalletSuccess:

@@ -38,6 +38,65 @@ paths:
           schema:
             $ref: '#/definitions/loginSuccess'
 
+  /api/auth/check-secret-word:
+    post:
+      tags:
+        - auth
+      summary: check secret word
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: check secret word
+          description: 
+          required: true
+          schema:
+            $ref: '#/definitions/checkSecretWord'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/checkSecretWordSuccess'
+  /api/auth/reset-password:
+    post:
+      tags:
+        - auth
+      summary: reset password
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: reset password
+          description: 
+          required: true
+          schema:
+            $ref: '#/definitions/login'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/checkSecretWordSuccess'
+
+  /api/auth/:id:
+    put:
+      tags:
+        - auth
+      summary: update user
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: update user
+          description: 
+          required: true
+          schema:
+            $ref: '#/definitions/register'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/checkSecretWordSuccess'
+
 definitions:
   register:
     type: object
@@ -49,6 +108,8 @@ definitions:
       firstName:
         type: string
       lastName:
+        type: string
+      secretWord:
         type: string
 
   registerSuccess:
@@ -74,7 +135,7 @@ definitions:
         type: string
       password:
         type: string
-        
+
   loginSuccess:
     type: object
     properties:
@@ -90,4 +151,24 @@ definitions:
         type: integer
         format: int32
       token:
+        type: string
+
+  checkSecretWord:
+    type: object
+    properties:
+      email:
+        type: string
+      secretWord:
+        type: string
+
+  checkSecretWordSuccess:
+    type: object
+    properties:
+      id:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
         type: string

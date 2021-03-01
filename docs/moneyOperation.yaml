@@ -1,0 +1,282 @@
+paths:
+  /api/money-operation:
+    get:
+      tags:
+        - money-operation
+      summary: getAll
+      parameters:
+        - in: query
+          name: type
+          type: integer
+          format: int32
+          description: getByTypeAndDate
+        - in: query
+          name: startDate
+          type: string
+          description: getByTypeAndDate
+        - in: query
+          name: endDate
+          type: string
+          description: getByTypeAndDate
+
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getAllMoneyOperationSuccess'
+    post:
+      tags:
+        - money-operation
+      summary: create
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: create
+          description: create
+          required: true
+          schema:
+            $ref: '#/definitions/createMoneyOperation'
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: '#/definitions/createMoneyOperationSuccess'
+
+  /api/money-operation/:id:
+    get:
+      tags:
+        - money-operation
+      summary: getById
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/getById'
+    put:
+      tags:
+        - money-operation
+      summary: update
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: update
+          description: update
+          required: true
+          schema:
+            $ref: '#/definitions/createMoneyOperation'
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/createMoneyOperationSuccess'
+    delete:
+      tags:
+        - money-operation
+      summary: delete
+      produces:
+        - application/json
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/deleteSuccess'
+
+definitions:
+  getAllMoneyOperationSuccess:
+    type: array
+    items:
+      type: object
+      properties:
+        amount:
+          type: integer
+          format: int32
+        id:
+          type: string
+        comment:
+          type: string
+        category:
+          type: object
+          properties:
+            _id:
+              type: string
+            name:
+              type: string
+            type:
+              type: integer
+              format: int32
+            owner:
+              type: string
+        wallet:
+          type: object
+          properties:
+            balance:
+              type: integer
+              format: int32
+            _id:
+              type: string
+            name:
+              type: string
+            type:
+              type: string
+            owner:
+              type: string
+        fromWallet:
+          type: object
+          properties:
+            balance:
+              type: integer
+              format: int32
+            _id:
+              type: string
+            name:
+              type: string
+            type:
+              type: string
+            owner:
+              type: string
+        toWalletId:
+          type: object
+          properties:
+            balance:
+              type: integer
+              format: int32
+            _id:
+              type: string
+            name:
+              type: string
+            type:
+              type: string
+            owner:
+              type: string
+        owner:
+          type: string
+        date:
+          type: string
+
+  createMoneyOperation:
+    type: object
+    properties:
+      amount:
+        type: integer
+        format: int32
+      comment:
+        type: string
+      categoryId:
+        type: string
+      walletId:
+        type: string
+      fromWalletId:
+        type: string
+      toWalletId:
+        type: string
+      type:
+        type: integer
+        format: int32
+
+  createMoneyOperationSuccess:
+    type: object
+    properties:
+      total:
+        type: integer
+        format: int32
+      expenseModel:
+        type: object
+        properties:
+          amount:
+            type: integer
+            format: int32
+          id:
+            type: string
+          comment:
+            type: string
+          category:
+            type: string
+          toWallet:
+            type: string
+          wallet:
+            type: string
+          fromWallet:
+            type: string
+          owner:
+            type: string
+          date:
+            type: string
+          type:
+            type: integer
+            format: int32
+  deleteSuccess:
+    type: object
+    properties:
+      message:
+        type: string
+  getById:
+    type: object
+    properties:
+      amount:
+        type: integer
+        format: int32
+      id:
+        type: string
+      comment:
+        type: string
+      category:
+        type: object
+        properties:
+          _id:
+            type: string
+          name:
+            type: string
+          type:
+            type: integer
+            format: int32
+          owner:
+            type: string
+      wallet:
+        type: object
+        properties:
+          balance:
+            type: integer
+            format: int32
+          _id:
+            type: string
+          name:
+            type: string
+          type:
+            type: string
+          owner:
+            type: string
+      fromWallet:
+        type: object
+        properties:
+          balance:
+            type: integer
+            format: int32
+          _id:
+            type: string
+          name:
+            type: string
+          type:
+            type: string
+          owner:
+            type: string
+      toWalletId:
+        type: object
+        properties:
+          balance:
+            type: integer
+            format: int32
+          _id:
+            type: string
+          name:
+            type: string
+          type:
+            type: string
+          owner:
+            type: string
+      owner:
+        type: string
+      date:
+        type: string
+    params:
+      type: object
+      properties:
+        message:
+          type: string
