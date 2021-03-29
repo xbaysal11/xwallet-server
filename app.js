@@ -1,11 +1,18 @@
 const express = require('express');
+const cors = require('cors');
+
 const config = require('config');
 const mongoose = require('mongoose');
 const app = express();
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  optionsSuccessStatus: 200, // For legacy browser support
+};
 
 mongoose.set('useFindAndModify', false);
+app.use(cors(corsOptions));
 app.use(express.json({ extended: true }));
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/wallet', require('./routes/wallet.routes'));
