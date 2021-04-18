@@ -7,8 +7,8 @@ const app = express();
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const corsOptions = {
-  origin: 'http://localhost:3000',
-  optionsSuccessStatus: 200, // For legacy browser support
+  // origin: 'http://localhost:3000',
+  // optionsSuccessStatus: 200, // For legacy browser support
 };
 
 mongoose.set('useFindAndModify', false);
